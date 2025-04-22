@@ -13,6 +13,7 @@ public enum StatusCodeEnum {
     INVALID_REQUEST_TIME_MILLIS("4000","request time millis value is invalid"),
     INVALID_TOKEN_ARRAY_LENGTH("4001","token array length is invalid"),
     INVALID_EMAIL_FORMAT("4002","email format is not invalid"),
+    INVALID_TOKEN_HEADER_REQUEST("4003", "token is invalid or empty"),
 
     EMAIL_SEND_FAILED("5001","email sent failed");
 
