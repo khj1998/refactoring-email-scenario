@@ -19,25 +19,25 @@ public class EmailController {
     private final EmailService emailService;
 
     @GetMapping
-    public ResponseEntity<BaseResponse<List<EmailLogResponseDto>>> getEmail(@RequestHeader("token") String token,@RequestParam String emailAddress,
+    public ResponseEntity<BaseResponse<List<EmailLogResponseDto>>> getEmail(@RequestParam String emailAddress,
                                                                             @RequestParam LocalDateTime startDate,@RequestParam LocalDateTime endDate) {
-        return ResponseEntity.ok(emailService.getEmailLogsWithAddress(token,emailAddress,startDate,endDate));
+        return ResponseEntity.ok(emailService.getEmailLogsWithAddress(emailAddress,startDate,endDate));
     }
 
     @GetMapping("/id")
-    public ResponseEntity<BaseResponse<EmailLogResponseDto>> getEmailWithId(@RequestHeader("token") String token,@RequestParam Long id) {
-        return ResponseEntity.ok(emailService.getEmailLogWithId(token,id));
+    public ResponseEntity<BaseResponse<EmailLogResponseDto>> getEmailWithId(@RequestParam Long id) {
+        return ResponseEntity.ok(emailService.getEmailLogWithId(id));
     }
 
     @GetMapping("/systemId")
-    public ResponseEntity<BaseResponse<List<EmailLogResponseDto>>> getEmailWithSystemId(@RequestHeader("token") String token, @RequestParam String systemId
+    public ResponseEntity<BaseResponse<List<EmailLogResponseDto>>> getEmailWithSystemId(@RequestParam String systemId
             ,@RequestParam LocalDateTime startDate,@RequestParam LocalDateTime endDate) {
-        return ResponseEntity.ok(emailService.getEmailLogsWithRequestSystemId(token,systemId,startDate,endDate));
+        return ResponseEntity.ok(emailService.getEmailLogsWithRequestSystemId(systemId,startDate,endDate));
     }
 
     @GetMapping("/transactionId")
-    public ResponseEntity<BaseResponse<List<EmailLogResponseDto>>> getEmailWithTransactionId(@RequestHeader("token") String token) {
-        return ResponseEntity.ok(emailService.getEmailLogWithTransactionId(token));
+    public ResponseEntity<BaseResponse<List<EmailLogResponseDto>>> getEmailWithTransactionId(@RequestParam String transactionId) {
+        return ResponseEntity.ok(emailService.getEmailLogWithTransactionId(transactionId));
     }
 
     @PostMapping

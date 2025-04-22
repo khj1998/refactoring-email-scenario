@@ -12,11 +12,11 @@ import java.util.concurrent.ConcurrentHashMap;
 
 @Slf4j
 @Component
-public class SystemIdCache {
+public class ServiceIdCache {
     private final RequestSystemRepository requestSystemRepository;
     private final ConcurrentHashMap<String, RequestSystem> systemIdsCache;
 
-    public SystemIdCache(RequestSystemRepository requestSystemRepository) {
+    public ServiceIdCache(RequestSystemRepository requestSystemRepository) {
         systemIdsCache = new ConcurrentHashMap<>();
         this.requestSystemRepository = requestSystemRepository;
     }
@@ -27,7 +27,7 @@ public class SystemIdCache {
 
         List<RequestSystem> requestSystemList = requestSystemRepository.findAll();
         for (RequestSystem requestSystem : requestSystemList) {
-            systemIdsCache.put(requestSystem.getSystemId(),requestSystem);
+            systemIdsCache.put(requestSystem.getSystemId(), requestSystem);
         }
 
         log.info("Application Context has fetched request system ids successfully");

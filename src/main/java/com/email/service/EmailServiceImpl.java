@@ -23,17 +23,10 @@ import java.util.List;
 @RequiredArgsConstructor
 public class EmailServiceImpl implements EmailService {
     private final EmailRepository emailRepository;
-    private final RequestSystemRepository requestSystemRepository;
 
     @Override
     @Transactional(readOnly = true)
-    public BaseResponse<EmailLogResponseDto> getEmailLogWithId(String token,Long id) {
-        String decodedToken = TokenUtils.decodeToken(token);
-        String[] decodedTokenArray = TokenUtils.parseToken(decodedToken);
-
-        TokenUtils.validateTokenArrayLength(decodedTokenArray);
-        TokenUtils.validateRequestMillisTime(decodedTokenArray);
-
+    public BaseResponse<EmailLogResponseDto> getEmailLogWithId(Long id) {
         EmailData emailData = emailRepository.findById(id)
                 .orElseThrow(() -> new BaseException(StatusCodeEnum.EMAIL_NOT_EXISTS));
 
@@ -41,68 +34,49 @@ public class EmailServiceImpl implements EmailService {
 
         return BaseResponse.<EmailLogResponseDto>builder()
                 .statusCode(StatusCodeEnum.EMAIL_QUERY_SUCCESS.getStatusCode())
-                .message(StatusCodeEnum.EMAIL_SEND_SUCCESS.getMessage())
+                .message(StatusCodeEnum.EMAIL_QUERY_SUCCESS.getMessage())
                 .data(responseDto)
                 .build();
     }
 
     @Override
     @Transactional(readOnly = true)
-    public BaseResponse<List<EmailLogResponseDto>> getEmailLogWithTransactionId(String token) {
-        String decodedToken = TokenUtils.decodeToken(token);
-        String[] decodedTokenArray = TokenUtils.parseToken(decodedToken);
-
-        TokenUtils.validateTokenArrayLength(decodedTokenArray);
-        TokenUtils.validateRequestMillisTime(decodedTokenArray);
-
-        String transactionId = TokenUtils.getTransactionId(decodedTokenArray);
+    public BaseResponse<List<EmailLogResponseDto>> getEmailLogWithTransactionId(String transactionId) {
         List<EmailData> emailData = emailRepository.findByTransactionId(transactionId);
 
         List<EmailLogResponseDto> responseDto = EmailLogResponseDto.of(emailData);
 
         return BaseResponse.<List<EmailLogResponseDto>>builder()
                 .statusCode(StatusCodeEnum.EMAIL_QUERY_SUCCESS.getStatusCode())
-                .message(StatusCodeEnum.EMAIL_SEND_SUCCESS.getMessage())
+                .message(StatusCodeEnum.EMAIL_QUERY_SUCCESS.getMessage())
                 .data(responseDto)
                 .build();
     }
 
     @Override
     @Transactional(readOnly = true)
-    public BaseResponse<List<EmailLogResponseDto>> getEmailLogsWithRequestSystemId(String token,String systemId, LocalDateTime startDate, LocalDateTime endDate) {
-        String decodedToken = TokenUtils.decodeToken(token);
-        String[] decodedTokenArray = TokenUtils.parseToken(decodedToken);
-
-        TokenUtils.validateTokenArrayLength(decodedTokenArray);
-        TokenUtils.validateRequestMillisTime(decodedTokenArray);
-
+    public BaseResponse<List<EmailLogResponseDto>> getEmailLogsWithRequestSystemId(String systemId, LocalDateTime startDate, LocalDateTime endDate) {
         List<EmailData> emailDataList = emailRepository.findEmailsBySystemId(systemId,startDate,endDate);
 
         List<EmailLogResponseDto> responseDto = EmailLogResponseDto.of(emailDataList);
 
         return BaseResponse.<List<EmailLogResponseDto>>builder()
                 .statusCode(StatusCodeEnum.EMAIL_QUERY_SUCCESS.getStatusCode())
-                .message(StatusCodeEnum.EMAIL_SEND_SUCCESS.getMessage())
+                .message(StatusCodeEnum.EMAIL_QUERY_SUCCESS.getMessage())
                 .data(responseDto)
                 .build();
     }
 
     @Override
     @Transactional(readOnly = true)
-    public BaseResponse<List<EmailLogResponseDto>> getEmailLogsWithAddress(String token,String address, LocalDateTime startDate, LocalDateTime endDate) {
-        String decodedToken = TokenUtils.decodeToken(token);
-        String[] decodedTokenArray = TokenUtils.parseToken(decodedToken);
-
-        TokenUtils.validateTokenArrayLength(decodedTokenArray);
-        TokenUtils.validateRequestMillisTime(decodedTokenArray);
-
+    public BaseResponse<List<EmailLogResponseDto>> getEmailLogsWithAddress(String address, LocalDateTime startDate, LocalDateTime endDate) {
         List<EmailData> emailDataList = emailRepository.findEmailsByAddress(address,startDate,endDate);
 
         List<EmailLogResponseDto> responseDto = EmailLogResponseDto.of(emailDataList);
 
         return BaseResponse.<List<EmailLogResponseDto>>builder()
                 .statusCode(StatusCodeEnum.EMAIL_QUERY_SUCCESS.getStatusCode())
-                .message(StatusCodeEnum.EMAIL_SEND_SUCCESS.getMessage())
+                .message(StatusCodeEnum.EMAIL_QUERY_SUCCESS.getMessage())
                 .data(responseDto)
                 .build();
     }
