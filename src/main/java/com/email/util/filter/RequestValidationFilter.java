@@ -3,30 +3,31 @@ package com.email.util.filter;
 import com.email.common.BaseResponse;
 import com.email.common.StatusCodeEnum;
 import com.email.exception.BaseException;
+import com.email.service.RequestSystemService;
 import com.email.util.TokenUtils;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import jakarta.servlet.*;
 import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpServletResponse;
 import lombok.extern.slf4j.Slf4j;
-import org.antlr.v4.runtime.Token;
+import org.springframework.web.filter.OncePerRequestFilter;
 
 import java.io.IOException;
 
 @Slf4j
-public class RequestValidationFilter implements Filter {
+public class RequestValidationFilter extends OncePerRequestFilter {
     private final ObjectMapper objectMapper;
+    private final RequestSystemService requestSystemService;
 
-    public RequestValidationFilter(ObjectMapper objectMapper) {
+    public RequestValidationFilter(ObjectMapper objectMapper,RequestSystemService requestSystemService) {
         this.objectMapper = objectMapper;
+        this.requestSystemService = requestSystemService;
     }
 
     @Override
-    public void doFilter(ServletRequest req, ServletResponse res, FilterChain filterChain) throws IOException, ServletException {
-        HttpServletRequest httpServletRequest = (HttpServletRequest) req;
-        log.info("Request validation filter has been started with request URI : {}",((HttpServletRequest) req).getRequestURI());
-
-        String token = httpServletRequest.getHeader("token");
+    protected void doFilterInternal(HttpServletRequest req, HttpServletResponse res, FilterChain filterChain) throws ServletException, IOException {
+        log.info("Request validation filter has been started with request URI : {}" ,req.getRequestURI());
+        String token = req.getHeader("token");
 
         try {
             if (token == null || token.isBlank()) {
@@ -38,8 +39,11 @@ public class RequestValidationFilter implements Filter {
 
             TokenUtils.validateTokenArrayLength(decodedTokenArray);
             TokenUtils.validateRequestMillisTime(decodedTokenArray);
+
+            String serviceId = TokenUtils.getRequestSystemId(decodedTokenArray);
+            requestSystemService.validateSystemIdExists(serviceId);
         } catch (BaseException ex) {
-            createBaseExceptionResponse((HttpServletResponse) res,ex);
+            createBaseExceptionResponse(res,ex);
             return;
         }
 

@@ -34,9 +34,6 @@ public class EmailServiceImpl implements EmailService {
         TokenUtils.validateTokenArrayLength(decodedTokenArray);
         TokenUtils.validateRequestMillisTime(decodedTokenArray);
 
-        requestSystemRepository.findBySystemId(TokenUtils.getRequestSystemId(decodedTokenArray))
-                .orElseThrow(() -> new BaseException(StatusCodeEnum.SYSTEM_NOT_EXISTS));
-
         EmailData emailData = emailRepository.findById(id)
                 .orElseThrow(() -> new BaseException(StatusCodeEnum.EMAIL_NOT_EXISTS));
 
@@ -57,9 +54,6 @@ public class EmailServiceImpl implements EmailService {
 
         TokenUtils.validateTokenArrayLength(decodedTokenArray);
         TokenUtils.validateRequestMillisTime(decodedTokenArray);
-
-        requestSystemRepository.findBySystemId(TokenUtils.getRequestSystemId(decodedTokenArray))
-                .orElseThrow(() -> new BaseException(StatusCodeEnum.SYSTEM_NOT_EXISTS));
 
         String transactionId = TokenUtils.getTransactionId(decodedTokenArray);
         List<EmailData> emailData = emailRepository.findByTransactionId(transactionId);
@@ -82,9 +76,6 @@ public class EmailServiceImpl implements EmailService {
         TokenUtils.validateTokenArrayLength(decodedTokenArray);
         TokenUtils.validateRequestMillisTime(decodedTokenArray);
 
-        requestSystemRepository.findBySystemId(TokenUtils.getRequestSystemId(decodedTokenArray))
-                .orElseThrow(() -> new BaseException(StatusCodeEnum.SYSTEM_NOT_EXISTS));
-
         List<EmailData> emailDataList = emailRepository.findEmailsBySystemId(systemId,startDate,endDate);
 
         List<EmailLogResponseDto> responseDto = EmailLogResponseDto.of(emailDataList);
@@ -104,9 +95,6 @@ public class EmailServiceImpl implements EmailService {
 
         TokenUtils.validateTokenArrayLength(decodedTokenArray);
         TokenUtils.validateRequestMillisTime(decodedTokenArray);
-
-        requestSystemRepository.findBySystemId(TokenUtils.getRequestSystemId(decodedTokenArray))
-                .orElseThrow(() -> new BaseException(StatusCodeEnum.SYSTEM_NOT_EXISTS));
 
         List<EmailData> emailDataList = emailRepository.findEmailsByAddress(address,startDate,endDate);
 
@@ -130,9 +118,6 @@ public class EmailServiceImpl implements EmailService {
         TokenUtils.validateTokenArrayLength(decodedTokenArray);
         TokenUtils.validateRequestMillisTime(decodedTokenArray);
 
-        requestSystemRepository.findBySystemId(TokenUtils.getRequestSystemId(decodedTokenArray))
-                .orElseThrow(() -> new BaseException(StatusCodeEnum.SYSTEM_NOT_EXISTS));
-
         String transactionId = TokenUtils.getTransactionId(decodedTokenArray);
         String systemId = TokenUtils.getRequestSystemId(decodedTokenArray);
 
@@ -153,9 +138,6 @@ public class EmailServiceImpl implements EmailService {
 
         TokenUtils.validateTokenArrayLength(decodedTokenArray);
         TokenUtils.validateRequestMillisTime(decodedTokenArray);
-
-        requestSystemRepository.findBySystemId(TokenUtils.getRequestSystemId(decodedTokenArray))
-                .orElseThrow(() -> new BaseException(StatusCodeEnum.SYSTEM_NOT_EXISTS));
 
         String transactionId = TokenUtils.getTransactionId(decodedTokenArray);
         String systemId = TokenUtils.getRequestSystemId(decodedTokenArray);
