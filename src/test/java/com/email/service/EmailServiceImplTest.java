@@ -42,8 +42,6 @@ class EmailServiceImplTest {
     private EmailServiceImpl emailService;
 
     private String testToken;
-    private String testTransactionId;
-    private String testSystemId;
 
     @BeforeEach
     void init() {
@@ -53,11 +51,6 @@ class EmailServiceImplTest {
         String rawToken = transactionId + ":" + serviceId + ":" + timestamp;
 
         testToken = Base64.getEncoder().encodeToString(rawToken.getBytes());
-
-        String decodedToken = TokenUtils.decodeToken(testToken);
-        String[] tokenArray = TokenUtils.parseToken(decodedToken);
-        testTransactionId = TokenUtils.getTransactionId(tokenArray);
-        testSystemId = TokenUtils.getRequestSystemId(tokenArray);
     }
 
     @Test
@@ -70,8 +63,8 @@ class EmailServiceImplTest {
                 .text("test text")
                 .emailAddress("test@test.com")
                 .reqDate(requestDto.getReqDate())
-                .transactionId(testTransactionId)
-                .systemId(testSystemId)
+                .transactionId(UUID.randomUUID().toString())
+                .systemId(UUID.randomUUID().toString())
                 .status("pending")
                 .build();
 
@@ -82,5 +75,16 @@ class EmailServiceImplTest {
 
         assertEquals(StatusCodeEnum.EMAIL_QUERY_SUCCESS.getStatusCode(),responseDto.getStatusCode());
         assertEquals(StatusCodeEnum.EMAIL_QUERY_SUCCESS.getMessage(),responseDto.getMessage());
+    }
+
+    @Test
+    @DisplayName("이메일 발송 데이터 save 테스트")
+    void sendEmail() {
+        EmailSendRequestDto requestDto = new EmailSendRequestDto("test@test.com","test text",LocalDateTime.now());
+
+        BaseResponse responseDto = emailService.sendEmail(testToken,requestDto);
+
+        assertEquals(StatusCodeEnum.EMAIL_SEND_SUCCESS.getStatusCode(),responseDto.getStatusCode());
+        assertEquals(StatusCodeEnum.EMAIL_SEND_SUCCESS.getMessage(),responseDto.getMessage());
     }
 }
