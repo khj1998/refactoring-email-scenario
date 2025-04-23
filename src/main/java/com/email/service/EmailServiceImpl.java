@@ -8,7 +8,6 @@ import com.email.dto.request.EmailSendRequestDto;
 import com.email.dto.response.EmailLogResponseDto;
 import com.email.exception.BaseException;
 import com.email.repository.EmailRepository;
-import com.email.repository.RequestSystemRepository;
 import com.email.util.TokenUtils;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;

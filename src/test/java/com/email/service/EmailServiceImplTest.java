@@ -42,6 +42,8 @@ class EmailServiceImplTest {
     private EmailServiceImpl emailService;
 
     private String testToken;
+    private String testTransactionId;
+    private String testSystemId;
 
     @BeforeEach
     void init() {
@@ -51,17 +53,17 @@ class EmailServiceImplTest {
         String rawToken = transactionId + ":" + serviceId + ":" + timestamp;
 
         testToken = Base64.getEncoder().encodeToString(rawToken.getBytes());
+
+        String decodedToken = TokenUtils.decodeToken(testToken);
+        String[] tokenArray = TokenUtils.parseToken(decodedToken);
+        testTransactionId = TokenUtils.getTransactionId(tokenArray);
+        testSystemId = TokenUtils.getRequestSystemId(tokenArray);
     }
 
     @Test
     @DisplayName("이메일 로그 식별자(pk)로 이력을 조회하는 테스트")
     void getEmailLogWithId() {
         EmailSendRequestDto requestDto = new EmailSendRequestDto("test email","test text",LocalDateTime.now());
-
-        String decodedToken = TokenUtils.decodeToken(testToken);
-        String[] tokenArray = TokenUtils.parseToken(decodedToken);
-        String testTransactionId = TokenUtils.getTransactionId(tokenArray);
-        String testSystemId = TokenUtils.getRequestSystemId(tokenArray);
 
         EmailData emailData = EmailData.builder()
                 .id(1L)
@@ -73,22 +75,12 @@ class EmailServiceImplTest {
                 .status("pending")
                 .build();
 
-        RequestSystem requestSystem = RequestSystem.builder()
-                .id(1L)
-                .systemId(testSystemId)
-                .systemName("test system")
-                .createdAt(LocalDateTime.now())
-                .updatedAt(LocalDateTime.now())
-                .build();
-        when(requestSystemRepository.findBySystemId(anyString()))
-                .thenReturn(Optional.of(requestSystem));
-
         when(emailRepository.findById(anyLong()))
                 .thenReturn(Optional.of(emailData));
 
-        BaseResponse<EmailLogResponseDto> responseDto = emailService.getEmailLogWithId(testToken,1L);
+        BaseResponse<EmailLogResponseDto> responseDto = emailService.getEmailLogWithId(1L);
 
         assertEquals(StatusCodeEnum.EMAIL_QUERY_SUCCESS.getStatusCode(),responseDto.getStatusCode());
-        assertEquals(StatusCodeEnum.EMAIL_SEND_SUCCESS.getMessage(),responseDto.getMessage());
+        assertEquals(StatusCodeEnum.EMAIL_QUERY_SUCCESS.getMessage(),responseDto.getMessage());
     }
 }
