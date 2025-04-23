@@ -3,7 +3,6 @@ package com.email.util.filter;
 import com.email.common.BaseResponse;
 import com.email.common.StatusCodeEnum;
 import com.email.exception.BaseException;
-import com.email.service.RequestSystemService;
 import com.email.util.TokenUtils;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import jakarta.servlet.*;
@@ -17,11 +16,9 @@ import java.io.IOException;
 @Slf4j
 public class RequestValidationFilter extends OncePerRequestFilter {
     private final ObjectMapper objectMapper;
-    private final RequestSystemService requestSystemService;
 
-    public RequestValidationFilter(ObjectMapper objectMapper,RequestSystemService requestSystemService) {
+    public RequestValidationFilter(ObjectMapper objectMapper) {
         this.objectMapper = objectMapper;
-        this.requestSystemService = requestSystemService;
     }
 
     @Override
@@ -41,7 +38,6 @@ public class RequestValidationFilter extends OncePerRequestFilter {
             TokenUtils.validateRequestMillisTime(decodedTokenArray);
 
             String serviceId = TokenUtils.getRequestSystemId(decodedTokenArray);
-            requestSystemService.validateSystemIdExists(serviceId);
         } catch (BaseException ex) {
             createBaseExceptionResponse(res,ex);
             return;

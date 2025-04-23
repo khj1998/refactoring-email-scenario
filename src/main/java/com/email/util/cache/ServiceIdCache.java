@@ -6,6 +6,7 @@ import lombok.extern.slf4j.Slf4j;
 import org.springframework.context.event.ContextRefreshedEvent;
 import org.springframework.context.event.EventListener;
 import org.springframework.stereotype.Component;
+import org.springframework.transaction.annotation.Transactional;
 
 import java.util.List;
 import java.util.concurrent.ConcurrentHashMap;
@@ -21,6 +22,7 @@ public class ServiceIdCache {
         this.requestSystemRepository = requestSystemRepository;
     }
 
+    @Transactional(readOnly = true)
     @EventListener(ContextRefreshedEvent.class)
     public void initializeCache() {
         log.info("Application Context has been ready for initializing request system Ids");
