@@ -67,6 +67,20 @@ public class EmailServiceImpl implements EmailService {
     }
 
     @Override
+    @Transactional(readOnly = true)
+    public BaseResponse<List<EmailLogResponseDto>> getEmailLogsWithStatus(String status, LocalDateTime startDate, LocalDateTime endDate) {
+        List<EmailData> emailDataList = emailRepository.findEmailsByStatus(status,startDate,endDate);
+
+        List<EmailLogResponseDto> responseDto = EmailLogResponseDto.of(emailDataList);
+
+        return BaseResponse.<List<EmailLogResponseDto>>builder()
+                .statusCode(StatusCodeEnum.EMAIL_QUERY_SUCCESS.getStatusCode())
+                .message(StatusCodeEnum.EMAIL_QUERY_SUCCESS.getMessage())
+                .data(responseDto)
+                .build();
+    }
+
+    @Override
     @Transactional
     public BaseResponse sendEmail(EmailSendRequestDto requestDto) {
         requestDto.validateEmailFormat();

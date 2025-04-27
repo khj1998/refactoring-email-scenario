@@ -12,6 +12,7 @@ public interface EmailService {
     BaseResponse<EmailLogResponseDto> getEmailLogWithId(Long Id);
     BaseResponse<List<EmailLogResponseDto>> getEmailLogWithTransactionId(String transactionId);
     BaseResponse<List<EmailLogResponseDto>> getEmailLogsWithAddress(String address, LocalDateTime startDate,LocalDateTime endDate);
+    BaseResponse<List<EmailLogResponseDto>> getEmailLogsWithStatus(String status,LocalDateTime startDate,LocalDateTime endDate);
     BaseResponse sendEmail(EmailSendRequestDto requestDto);
     BaseResponse sendEmailList(EmailListSendRequestDto requestDto);
 }

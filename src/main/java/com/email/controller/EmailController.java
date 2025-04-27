@@ -34,6 +34,11 @@ public class EmailController {
         return ResponseEntity.ok(emailService.getEmailLogWithTransactionId(transactionId));
     }
 
+    @GetMapping("/status")
+    public ResponseEntity<BaseResponse<List<EmailLogResponseDto>>> getEmailWithStatus(@RequestParam String status,@RequestParam LocalDateTime startDate,@RequestParam LocalDateTime endDate) {
+        return ResponseEntity.ok(emailService.getEmailLogsWithStatus(status,startDate,endDate));
+    }
+
     @PostMapping
     public ResponseEntity<BaseResponse> sendEmail(@RequestBody EmailSendRequestDto requestDto) {
         return ResponseEntity.ok(emailService.sendEmail(requestDto));
