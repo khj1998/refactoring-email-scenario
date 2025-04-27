@@ -21,15 +21,15 @@ public class EmailListSendRequestDto {
     private List<String> emailAddressList;
     private String text;
     private LocalDateTime reqDate;
+    private String transactionId;
 
-    public List<EmailData> from(String transactionId,String systemId) {
+    public List<EmailData> toEmailDataList() {
         return emailAddressList.stream()
                 .map(email -> EmailData.builder()
                         .emailAddress(email)
                         .text(text)
                         .reqDate(reqDate)
                         .transactionId(transactionId)
-                        .systemId(systemId)
                         .status("pending")
                         .build())
                 .collect(Collectors.toList());

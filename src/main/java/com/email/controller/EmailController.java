@@ -29,24 +29,18 @@ public class EmailController {
         return ResponseEntity.ok(emailService.getEmailLogWithId(id));
     }
 
-    @GetMapping("/systemId")
-    public ResponseEntity<BaseResponse<List<EmailLogResponseDto>>> getEmailWithSystemId(@RequestParam String systemId
-            ,@RequestParam LocalDateTime startDate,@RequestParam LocalDateTime endDate) {
-        return ResponseEntity.ok(emailService.getEmailLogsWithRequestSystemId(systemId,startDate,endDate));
-    }
-
     @GetMapping("/transactionId")
     public ResponseEntity<BaseResponse<List<EmailLogResponseDto>>> getEmailWithTransactionId(@RequestParam String transactionId) {
         return ResponseEntity.ok(emailService.getEmailLogWithTransactionId(transactionId));
     }
 
     @PostMapping
-    public ResponseEntity<BaseResponse> sendEmail(@RequestHeader("token") String token,@RequestBody EmailSendRequestDto requestDto) {
-        return ResponseEntity.ok(emailService.sendEmail(token,requestDto));
+    public ResponseEntity<BaseResponse> sendEmail(@RequestBody EmailSendRequestDto requestDto) {
+        return ResponseEntity.ok(emailService.sendEmail(requestDto));
     }
 
     @PostMapping("/list")
-    public ResponseEntity<BaseResponse> sendEmail(@RequestHeader("token") String token,@RequestBody EmailListSendRequestDto requestDto) {
-        return ResponseEntity.ok(emailService.sendEmailList(token,requestDto));
+    public ResponseEntity<BaseResponse> sendEmail(@RequestBody EmailListSendRequestDto requestDto) {
+        return ResponseEntity.ok(emailService.sendEmailList(requestDto));
     }
 }

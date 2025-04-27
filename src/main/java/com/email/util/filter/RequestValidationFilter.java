@@ -4,6 +4,8 @@ import com.email.common.BaseResponse;
 import com.email.common.StatusCodeEnum;
 import com.email.exception.BaseException;
 import com.email.util.TokenUtils;
+import com.email.util.cache.SystemIdCache;
+import com.email.util.helper.HttpServletRequestHandler;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import jakarta.servlet.*;
 import jakarta.servlet.http.HttpServletRequest;
@@ -16,9 +18,13 @@ import java.io.IOException;
 @Slf4j
 public class RequestValidationFilter extends OncePerRequestFilter {
     private final ObjectMapper objectMapper;
+    private final SystemIdCache systemIdCache;
+    private final HttpServletRequestHandler handler;
 
-    public RequestValidationFilter(ObjectMapper objectMapper) {
+    public RequestValidationFilter(ObjectMapper objectMapper,SystemIdCache systemIdCache,HttpServletRequestHandler handler) {
         this.objectMapper = objectMapper;
+        this.systemIdCache = systemIdCache;
+        this.handler = handler;
     }
 
     @Override
@@ -33,18 +39,23 @@ public class RequestValidationFilter extends OncePerRequestFilter {
 
             String decodedToken = TokenUtils.decodeToken(token);
             String[] decodedTokenArray = TokenUtils.parseToken(decodedToken);
-
             TokenUtils.validateTokenArrayLength(decodedTokenArray);
             TokenUtils.validateRequestMillisTime(decodedTokenArray);
 
             String serviceId = TokenUtils.getRequestSystemId(decodedTokenArray);
+            systemIdCache.checkServiceIdExistsFromCache(serviceId);
+
+            String transactionId = TokenUtils.getTransactionId(decodedTokenArray);
+
+            if (req.getMethod().matches("POST")) {
+                req = handler.handleHttpServletRequest(req,transactionId);
+            }
+
+            log.info("Request validation filter has been ended successfully with request URI : {}",(req.getRequestURI()));
+            filterChain.doFilter(req,res);
         } catch (BaseException ex) {
             createBaseExceptionResponse(res,ex);
-            return;
         }
-
-        log.info("Request validation filter has been ended successfully with request URI : {}",((HttpServletRequest) req).getRequestURI());
-        filterChain.doFilter(req,res);
     }
 
     private void createBaseExceptionResponse(HttpServletResponse res, BaseException ex) throws IOException {

@@ -54,20 +54,6 @@ public class EmailServiceImpl implements EmailService {
 
     @Override
     @Transactional(readOnly = true)
-    public BaseResponse<List<EmailLogResponseDto>> getEmailLogsWithRequestSystemId(String systemId, LocalDateTime startDate, LocalDateTime endDate) {
-        List<EmailData> emailDataList = emailRepository.findEmailsBySystemId(systemId,startDate,endDate);
-
-        List<EmailLogResponseDto> responseDto = EmailLogResponseDto.of(emailDataList);
-
-        return BaseResponse.<List<EmailLogResponseDto>>builder()
-                .statusCode(StatusCodeEnum.EMAIL_QUERY_SUCCESS.getStatusCode())
-                .message(StatusCodeEnum.EMAIL_QUERY_SUCCESS.getMessage())
-                .data(responseDto)
-                .build();
-    }
-
-    @Override
-    @Transactional(readOnly = true)
     public BaseResponse<List<EmailLogResponseDto>> getEmailLogsWithAddress(String address, LocalDateTime startDate, LocalDateTime endDate) {
         List<EmailData> emailDataList = emailRepository.findEmailsByAddress(address,startDate,endDate);
 
@@ -82,19 +68,10 @@ public class EmailServiceImpl implements EmailService {
 
     @Override
     @Transactional
-    public BaseResponse sendEmail(String token,EmailSendRequestDto requestDto) {
+    public BaseResponse sendEmail(EmailSendRequestDto requestDto) {
         requestDto.validateEmailFormat();
 
-        String tokenArray = TokenUtils.decodeToken(token);
-        String[] decodedTokenArray = TokenUtils.parseToken(tokenArray);
-
-        TokenUtils.validateTokenArrayLength(decodedTokenArray);
-        TokenUtils.validateRequestMillisTime(decodedTokenArray);
-
-        String transactionId = TokenUtils.getTransactionId(decodedTokenArray);
-        String systemId = TokenUtils.getRequestSystemId(decodedTokenArray);
-
-        EmailData emailData = requestDto.from(transactionId,systemId);
+        EmailData emailData = requestDto.toEmailData();
         emailRepository.save(emailData);
 
         return BaseResponse.builder()
@@ -105,17 +82,10 @@ public class EmailServiceImpl implements EmailService {
 
     @Override
     @Transactional
-    public BaseResponse sendEmailList(String token,EmailListSendRequestDto requestDto) {
-        String tokenArray = TokenUtils.decodeToken(token);
-        String[] decodedTokenArray = TokenUtils.parseToken(tokenArray);
+    public BaseResponse sendEmailList(EmailListSendRequestDto requestDto) {
+        requestDto.validateEmailFormat();
 
-        TokenUtils.validateTokenArrayLength(decodedTokenArray);
-        TokenUtils.validateRequestMillisTime(decodedTokenArray);
-
-        String transactionId = TokenUtils.getTransactionId(decodedTokenArray);
-        String systemId = TokenUtils.getRequestSystemId(decodedTokenArray);
-
-        List<EmailData> emailDataList = requestDto.from(transactionId,systemId);
+        List<EmailData> emailDataList = requestDto.toEmailDataList();
         emailRepository.saveAll(emailDataList);
 
         return BaseResponse.builder()
