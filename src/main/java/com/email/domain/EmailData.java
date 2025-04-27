@@ -32,9 +32,6 @@ public class EmailData {
     @Column(name = "transaction_id",nullable = false,columnDefinition = "varchar(64)",length = 64)
     private String transactionId;
 
-    @Column(name = "system_id",nullable = false,columnDefinition = "varchar(64)",length = 64)
-    private String systemId;
-
     @Column(name = "req_date",nullable = false,columnDefinition = "datetime")
     private LocalDateTime reqDate;
 
@@ -44,13 +41,12 @@ public class EmailData {
     @Column(name = "status",nullable = false,columnDefinition = "varchar(16)",length = 16)
     private String status;
 
-    public static EmailData from(EmailSendRequestDto dto,String transactionId,String systemId) {
+    public static EmailData from(EmailSendRequestDto dto,String transactionId) {
         return EmailData.builder()
                 .text(dto.getText())
                 .emailAddress(dto.getEmailAddress())
                 .reqDate(dto.getReqDate())
                 .transactionId(transactionId)
-                .systemId(systemId)
                 .status("pending")
                 .build();
     }

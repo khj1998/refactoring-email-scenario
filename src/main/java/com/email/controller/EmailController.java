@@ -29,15 +29,15 @@ public class EmailController {
         return ResponseEntity.ok(emailService.getEmailLogWithId(token,id));
     }
 
-    @GetMapping("/systemId")
-    public ResponseEntity<BaseResponse<List<EmailLogResponseDto>>> getEmailWithSystemId(@RequestHeader("token") String token, @RequestParam String systemId
-            ,@RequestParam LocalDateTime startDate,@RequestParam LocalDateTime endDate) {
-        return ResponseEntity.ok(emailService.getEmailLogsWithRequestSystemId(token,systemId,startDate,endDate));
-    }
-
     @GetMapping("/transactionId")
     public ResponseEntity<BaseResponse<List<EmailLogResponseDto>>> getEmailWithTransactionId(@RequestHeader("token") String token) {
         return ResponseEntity.ok(emailService.getEmailLogWithTransactionId(token));
+    }
+
+    @GetMapping("/status")
+    public ResponseEntity<BaseResponse<List<EmailLogResponseDto>>> getEmailWithStatus(@RequestHeader("token") String token,@RequestParam String status,
+                                                                                      @RequestParam LocalDateTime startDate,@RequestParam LocalDateTime endDate) {
+        return ResponseEntity.ok(emailService.getEmailLogsWithStatus(token,status,startDate,endDate));
     }
 
     @PostMapping

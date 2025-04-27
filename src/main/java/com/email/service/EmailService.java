@@ -11,8 +11,8 @@ import java.util.List;
 public interface EmailService {
     BaseResponse<EmailLogResponseDto> getEmailLogWithId(String token,Long Id);
     BaseResponse<List<EmailLogResponseDto>> getEmailLogWithTransactionId(String token);
-    BaseResponse<List<EmailLogResponseDto>> getEmailLogsWithRequestSystemId(String token,String systemId, LocalDateTime startDate,LocalDateTime endDate);
     BaseResponse<List<EmailLogResponseDto>> getEmailLogsWithAddress(String token,String address, LocalDateTime startDate,LocalDateTime endDate);
+    BaseResponse<List<EmailLogResponseDto>> getEmailLogsWithStatus(String token,String status,LocalDateTime startDate,LocalDateTime endDate);
     BaseResponse sendEmail(String token,EmailSendRequestDto requestDto);
     BaseResponse sendEmailList(String token,EmailListSendRequestDto requestDto);
 }

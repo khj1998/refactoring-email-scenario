@@ -19,13 +19,12 @@ public class EmailSendRequestDto {
     private String text;
     private LocalDateTime reqDate;
 
-    public EmailData from(String transactionId, String systemId) {
+    public EmailData from(String transactionId) {
         return EmailData.builder()
                 .text(getText())
                 .emailAddress(getEmailAddress())
                 .reqDate(getReqDate())
                 .transactionId(transactionId)
-                .systemId(systemId)
                 .status("pending")
                 .build();
     }

@@ -44,7 +44,7 @@ public class EmailServiceImpl implements EmailService {
 
         return BaseResponse.<EmailLogResponseDto>builder()
                 .statusCode(StatusCodeEnum.EMAIL_QUERY_SUCCESS.getStatusCode())
-                .message(StatusCodeEnum.EMAIL_SEND_SUCCESS.getMessage())
+                .message(StatusCodeEnum.EMAIL_QUERY_SUCCESS.getMessage())
                 .data(responseDto)
                 .build();
     }
@@ -68,30 +68,7 @@ public class EmailServiceImpl implements EmailService {
 
         return BaseResponse.<List<EmailLogResponseDto>>builder()
                 .statusCode(StatusCodeEnum.EMAIL_QUERY_SUCCESS.getStatusCode())
-                .message(StatusCodeEnum.EMAIL_SEND_SUCCESS.getMessage())
-                .data(responseDto)
-                .build();
-    }
-
-    @Override
-    @Transactional(readOnly = true)
-    public BaseResponse<List<EmailLogResponseDto>> getEmailLogsWithRequestSystemId(String token,String systemId, LocalDateTime startDate, LocalDateTime endDate) {
-        String decodedToken = TokenUtils.decodeToken(token);
-        String[] decodedTokenArray = TokenUtils.parseToken(decodedToken);
-
-        TokenUtils.validateTokenArrayLength(decodedTokenArray);
-        TokenUtils.validateRequestMillisTime(decodedTokenArray);
-
-        requestSystemRepository.findBySystemId(TokenUtils.getRequestSystemId(decodedTokenArray))
-                .orElseThrow(() -> new BaseException(StatusCodeEnum.SYSTEM_NOT_EXISTS));
-
-        List<EmailData> emailDataList = emailRepository.findEmailsBySystemId(systemId,startDate,endDate);
-
-        List<EmailLogResponseDto> responseDto = EmailLogResponseDto.of(emailDataList);
-
-        return BaseResponse.<List<EmailLogResponseDto>>builder()
-                .statusCode(StatusCodeEnum.EMAIL_QUERY_SUCCESS.getStatusCode())
-                .message(StatusCodeEnum.EMAIL_SEND_SUCCESS.getMessage())
+                .message(StatusCodeEnum.EMAIL_QUERY_SUCCESS.getMessage())
                 .data(responseDto)
                 .build();
     }
@@ -114,7 +91,30 @@ public class EmailServiceImpl implements EmailService {
 
         return BaseResponse.<List<EmailLogResponseDto>>builder()
                 .statusCode(StatusCodeEnum.EMAIL_QUERY_SUCCESS.getStatusCode())
-                .message(StatusCodeEnum.EMAIL_SEND_SUCCESS.getMessage())
+                .message(StatusCodeEnum.EMAIL_QUERY_SUCCESS.getMessage())
+                .data(responseDto)
+                .build();
+    }
+
+    @Override
+    @Transactional(readOnly = true)
+    public BaseResponse<List<EmailLogResponseDto>> getEmailLogsWithStatus(String token, String status, LocalDateTime startDate, LocalDateTime endDate) {
+        String decodedToken = TokenUtils.decodeToken(token);
+        String[] decodedTokenArray = TokenUtils.parseToken(decodedToken);
+
+        TokenUtils.validateTokenArrayLength(decodedTokenArray);
+        TokenUtils.validateRequestMillisTime(decodedTokenArray);
+
+        requestSystemRepository.findBySystemId(TokenUtils.getRequestSystemId(decodedTokenArray))
+                .orElseThrow(() -> new BaseException(StatusCodeEnum.SYSTEM_NOT_EXISTS));
+
+        List<EmailData> emailDataList = emailRepository.findEmailsByStatus(status,startDate,endDate);
+
+        List<EmailLogResponseDto> responseDto = EmailLogResponseDto.of(emailDataList);
+
+        return BaseResponse.<List<EmailLogResponseDto>>builder()
+                .statusCode(StatusCodeEnum.EMAIL_QUERY_SUCCESS.getStatusCode())
+                .message(StatusCodeEnum.EMAIL_QUERY_SUCCESS.getMessage())
                 .data(responseDto)
                 .build();
     }
@@ -134,9 +134,8 @@ public class EmailServiceImpl implements EmailService {
                 .orElseThrow(() -> new BaseException(StatusCodeEnum.SYSTEM_NOT_EXISTS));
 
         String transactionId = TokenUtils.getTransactionId(decodedTokenArray);
-        String systemId = TokenUtils.getRequestSystemId(decodedTokenArray);
 
-        EmailData emailData = requestDto.from(transactionId,systemId);
+        EmailData emailData = requestDto.from(transactionId);
         emailRepository.save(emailData);
 
         return BaseResponse.builder()

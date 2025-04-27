@@ -29,7 +29,6 @@ public class EmailListSendRequestDto {
                         .text(text)
                         .reqDate(reqDate)
                         .transactionId(transactionId)
-                        .systemId(systemId)
                         .status("pending")
                         .build())
                 .collect(Collectors.toList());
