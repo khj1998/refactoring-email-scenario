@@ -45,9 +45,8 @@ public class RequestValidationFilter extends OncePerRequestFilter {
             String serviceId = TokenUtils.getRequestSystemId(decodedTokenArray);
             systemIdCache.checkServiceIdExistsFromCache(serviceId);
 
-            String transactionId = TokenUtils.getTransactionId(decodedTokenArray);
-
             if (req.getMethod().matches("POST")) {
+                String transactionId = TokenUtils.getTransactionId(decodedTokenArray);
                 req = handler.handleHttpServletRequest(req,transactionId);
             }
 
