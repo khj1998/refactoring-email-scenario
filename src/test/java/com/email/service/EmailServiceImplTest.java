@@ -69,7 +69,6 @@ class EmailServiceImplTest {
                 .emailAddress("test@test.com")
                 .reqDate(requestDto.getReqDate())
                 .transactionId(testTransactionId)
-                .systemId(testSystemId)
                 .status("pending")
                 .build();
 
@@ -89,6 +88,6 @@ class EmailServiceImplTest {
         BaseResponse<EmailLogResponseDto> responseDto = emailService.getEmailLogWithId(testToken,1L);
 
         assertEquals(StatusCodeEnum.EMAIL_QUERY_SUCCESS.getStatusCode(),responseDto.getStatusCode());
-        assertEquals(StatusCodeEnum.EMAIL_SEND_SUCCESS.getMessage(),responseDto.getMessage());
+        assertEquals(StatusCodeEnum.EMAIL_QUERY_SUCCESS.getMessage(),responseDto.getMessage());
     }
 }
