@@ -19,34 +19,33 @@ public class EmailController {
     private final EmailService emailService;
 
     @GetMapping
-    public ResponseEntity<BaseResponse<List<EmailLogResponseDto>>> getEmail(@RequestHeader("token") String token,@RequestParam String emailAddress,
+    public ResponseEntity<BaseResponse<List<EmailLogResponseDto>>> getEmail(@RequestParam String emailAddress,
                                                                             @RequestParam LocalDateTime startDate,@RequestParam LocalDateTime endDate) {
-        return ResponseEntity.ok(emailService.getEmailLogsWithAddress(token,emailAddress,startDate,endDate));
+        return ResponseEntity.ok(emailService.getEmailLogsWithAddress(emailAddress,startDate,endDate));
     }
 
     @GetMapping("/id")
-    public ResponseEntity<BaseResponse<EmailLogResponseDto>> getEmailWithId(@RequestHeader("token") String token,@RequestParam Long id) {
-        return ResponseEntity.ok(emailService.getEmailLogWithId(token,id));
-    }
-
-    @GetMapping("/systemId")
-    public ResponseEntity<BaseResponse<List<EmailLogResponseDto>>> getEmailWithSystemId(@RequestHeader("token") String token, @RequestParam String systemId
-            ,@RequestParam LocalDateTime startDate,@RequestParam LocalDateTime endDate) {
-        return ResponseEntity.ok(emailService.getEmailLogsWithRequestSystemId(token,systemId,startDate,endDate));
+    public ResponseEntity<BaseResponse<EmailLogResponseDto>> getEmailWithId(@RequestParam Long id) {
+        return ResponseEntity.ok(emailService.getEmailLogWithId(id));
     }
 
     @GetMapping("/transactionId")
-    public ResponseEntity<BaseResponse<List<EmailLogResponseDto>>> getEmailWithTransactionId(@RequestHeader("token") String token) {
-        return ResponseEntity.ok(emailService.getEmailLogWithTransactionId(token));
+    public ResponseEntity<BaseResponse<List<EmailLogResponseDto>>> getEmailWithTransactionId(@RequestParam String transactionId) {
+        return ResponseEntity.ok(emailService.getEmailLogWithTransactionId(transactionId));
+    }
+
+    @GetMapping("/status")
+    public ResponseEntity<BaseResponse<List<EmailLogResponseDto>>> getEmailWithStatus(@RequestParam String status,@RequestParam LocalDateTime startDate,@RequestParam LocalDateTime endDate) {
+        return ResponseEntity.ok(emailService.getEmailLogsWithStatus(status,startDate,endDate));
     }
 
     @PostMapping
-    public ResponseEntity<BaseResponse> sendEmail(@RequestHeader("token") String token,@RequestBody EmailSendRequestDto requestDto) {
-        return ResponseEntity.ok(emailService.sendEmail(token,requestDto));
+    public ResponseEntity<BaseResponse> sendEmail(@RequestBody EmailSendRequestDto requestDto) {
+        return ResponseEntity.ok(emailService.sendEmail(requestDto));
     }
 
     @PostMapping("/list")
-    public ResponseEntity<BaseResponse> sendEmail(@RequestHeader("token") String token,@RequestBody EmailListSendRequestDto requestDto) {
-        return ResponseEntity.ok(emailService.sendEmailList(token,requestDto));
+    public ResponseEntity<BaseResponse> sendEmail(@RequestBody EmailListSendRequestDto requestDto) {
+        return ResponseEntity.ok(emailService.sendEmailList(requestDto));
     }
 }

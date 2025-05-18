@@ -12,9 +12,9 @@ import java.util.Optional;
 public interface EmailRepository extends JpaRepository<EmailData,Long> {
     List<EmailData> findByTransactionId(String transactionId);
 
-    @Query(value = "select e from EmailData e where e.systemId =:systemId and (e.reqDate between :startDate and :endDate)")
-    List<EmailData> findEmailsBySystemId(@Param("systemId")String systemId,@Param("startDate")LocalDateTime startDate,@Param("endDate")LocalDateTime endDate);
-
     @Query(value = "select e from EmailData e where e.emailAddress =:address and (e.reqDate between :startDate and :endDate)")
     List<EmailData> findEmailsByAddress(@Param("address")String address,@Param("startDate")LocalDateTime startDate,@Param("endDate")LocalDateTime endDate);
+
+    @Query(value = "select e from EmailData e where e.status =:status and (e.reqDate between :startDate and :endDate)")
+    List<EmailData> findEmailsByStatus(@Param("status") String status,@Param("startDate")LocalDateTime startDate,@Param("endDate")LocalDateTime endDate);
 }
