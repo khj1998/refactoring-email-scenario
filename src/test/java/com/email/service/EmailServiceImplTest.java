@@ -15,6 +15,7 @@ import org.mockito.junit.jupiter.MockitoExtension;
 import org.springframework.test.context.TestPropertySource;
 
 import java.time.LocalDateTime;
+import java.util.List;
 import java.util.Optional;
 import java.util.UUID;
 
@@ -33,7 +34,7 @@ class EmailServiceImplTest {
     private EmailServiceImpl emailService;
 
     @Test
-    @DisplayName("이메일 로그 식별자(pk)로 이력을 조회하는 테스트")
+    @DisplayName("이메일 로그 식별자로 이력을 조회하는 테스트")
     void getEmailLogWithId() {
         String testTransactionId = UUID.randomUUID().toString();
 
@@ -68,5 +69,28 @@ class EmailServiceImplTest {
 
         assertEquals(StatusCodeEnum.EMAIL_SEND_SUCCESS.getStatusCode(),responseDto.getStatusCode());
         assertEquals(StatusCodeEnum.EMAIL_SEND_SUCCESS.getMessage(),responseDto.getMessage());
+    }
+
+    @Test
+    @DisplayName("트랜잭션 Id로 이메일 발송 로그 조회")
+    void getEmailLogWithTransactionId() {
+        String testTransactionId = UUID.randomUUID().toString();
+
+        EmailData emailData = EmailData.builder()
+                .id(1L)
+                .text("test text")
+                .emailAddress("test@test.com")
+                .reqDate(LocalDateTime.now())
+                .transactionId(testTransactionId)
+                .status("pending")
+                .build();
+
+        when(emailRepository.findByTransactionId(testTransactionId))
+                .thenReturn(List.of(emailData));
+
+        BaseResponse responseDto = emailService.getEmailLogWithTransactionId(testTransactionId);
+
+        assertEquals(StatusCodeEnum.EMAIL_QUERY_SUCCESS.getStatusCode(),responseDto.getStatusCode());
+        assertEquals(StatusCodeEnum.EMAIL_QUERY_SUCCESS.getMessage(),responseDto.getMessage());
     }
 }
